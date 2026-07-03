@@ -1,0 +1,73 @@
+========================================================================
+                      WORKSTATION CONTINUITY PRO v1.0
+                         User Documentation & Guide
+========================================================================
+
+Thank you for choosing Workstation Continuity Pro—a premium, silent utility 
+designed to preserve your system activity and prevent automated workstation 
+sleep/lock telemetry.
+
+This utility is ideal for developers, systems engineers, data analysts, and 
+remote professionals who need to maintain continuous session telemetries during 
+long-running script executions, database migrations, model rendering, or 
+meeting presentations.
+
+------------------------------------------------------------------------
+1. QUICK START
+------------------------------------------------------------------------
+* Run the Application:
+  Double-click "WorkstationContinuityPro.exe". The application window will
+  launch directly on your screen.
+
+* Start the Engine:
+  Set your "Activation Delay" (default is 60 seconds) and select your 
+  desired "Simulation Mode" and "Compliance Shields". Click the green 
+  "START ENGINE" button. 
+
+* Automatic Minimization:
+  Once the engine starts, the window automatically minimizes and hides 
+  from your desktop and taskbar, continuing to run silently from your 
+  system notification tray.
+
+------------------------------------------------------------------------
+2. SYSTEM TRAY INTERACTION
+------------------------------------------------------------------------
+When minimized, you can manage the application directly from the system tray:
+* Restore Window: Double-click the tray icon (or right-click and select
+  "Show Window") to restore the GUI interface back to your screen.
+* Quick Controls: Right-click the tray icon to quickly toggle the engine,
+  change simulation modes, or toggle compliance shields without restoring
+  the main window.
+* Exit Utility: Right-click the tray icon and select "Quit Application" 
+  to stop the engine and close the utility cleanly.
+
+------------------------------------------------------------------------
+3. SIMULATION MODES
+------------------------------------------------------------------------
+* Mode A (Stealth Mouse Jitter): Simulates microscopic mouse sweeps (±1 pixel) 
+  at random intervals (2-12 seconds). It is completely invisible to the 
+  eye, preserving your work focus.
+* Mode B (Intelligent Key Router): Simulates natural keystrokes inside an 
+  isolated "stealth_canvas" Notepad background window. It will never leak 
+  or type into your active workspaces.
+* Mode C (Combined Telemetry): Alternates between organic mouse sweeps (using 
+  curved Bezier paths) and keyboard entries to simulate a realistic usage 
+  footprint.
+
+------------------------------------------------------------------------
+4. COMPLIANCE SHIELDS
+------------------------------------------------------------------------
+* Shield 1 (Prevent Lock): Asserts low-level OS display state requests to 
+  prevent display sleep.
+* Shield 2 (Window Focus Shuffler): Periodically performs Alt+Tab focus 
+  rotations to cycle active workspace metrics on analytics software.
+* Shield 3 (Auto Exit Application): Automatically shuts down the utility after 
+  a set workday time (e.g. 60 minutes) to match standard business hours.
+
+------------------------------------------------------------------------
+5. SUPPORT & LEGITIMACY
+------------------------------------------------------------------------
+Workstation Continuity Pro uses dynamially aliased Win32 entry points to avoid 
+false positives from heuristic antivirus packages (such as Kaspersky). It runs 
+100% locally and does not transmit data over the network.
+========================================================================

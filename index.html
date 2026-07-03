@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Engine Pro - Web Console</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #121318;
+            --bg-card: #1B1D24;
+            --bg-input: #121318;
+            --border-color: #2E3039;
+            --text-main: #F3F4F6;
+            --text-muted: #6B7280;
+            --text-sub: #9CA3AF;
+            --color-green: #10B981;
+            --color-green-bg: #065F46;
+            --color-green-text: #A7F3D0;
+            --color-blue: #3B82F6;
+            --color-blue-bg: #1E3A8A;
+            --color-blue-text: #93C5FD;
+            --color-amber: #D97706;
+            --color-amber-bg: #78350F;
+            --color-amber-text: #FCD34D;
+            --color-red: #F43F5E;
+            --color-red-bg: #991B1B;
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Dashboard Container */
+        .window-container {
+            width: 100%;
+            max-width: 440px;
+            background-color: var(--bg-main);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background-color: var(--bg-card);
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--text-muted);
+            margin-right: 8px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .indicator-dot.active {
+            background-color: var(--color-green);
+            box-shadow: 0 0 8px var(--color-green);
+        }
+
+        .title-text {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--text-main);
+        }
+
+        .title-version {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-left: 6px;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Card System */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Telemetry Header Card */
+        .status-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+        }
+
+        .status-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .status-label {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .status-value {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-main);
+            transition: color 0.3s ease;
+        }
+
+        .status-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 10px;
+            background-color: var(--text-muted);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Activation Delay Card */
+        .delay-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delay-info {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+
+        .delay-title {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .delay-desc {
+            font-size: 8.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .delay-input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .number-input {
+            width: 40px;
+            height: 26px;
+            background-color: var(--bg-input);
+            border: 1.5px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-main);
+            font-family: var(--font-main);
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .number-input:focus {
+            border-color: var(--color-blue);
+        }
+
+        .unit-label {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-left: 4px;
+        }
+
+        /* Mode Selector Card */
+        .mode-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .card-label {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 0;
+            position: relative;
+        }
+
+        .radio-input {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 50%;
+            background-color: var(--bg-input);
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-top: 1px;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .radio-input:checked {
+            border-color: var(--color-blue);
+            background-color: var(--color-blue-bg);
+        }
+
+        .radio-input:checked::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--color-blue-text);
+        }
+
+        .radio-label-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .radio-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .radio-tip {
+            display: none;
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            line-height: 1.3;
+        }
+
+        .radio-option:hover .radio-tip {
+            display: block;
+        }
+
+        /* Compliance Matrix Shields Card */
+        .shields-card {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .checkbox-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-input {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 3px;
+            background-color: var(--bg-input);
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .checkbox-input:checked {
+            border-color: var(--color-green);
+            background-color: var(--color-green-bg);
+        }
+
+        .checkbox-input:checked::after {
+            content: '✓';
+            color: var(--color-green-text);
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .shield-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .shield-countdown {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--color-blue-text);
+            width: 60px;
+            text-align: right;
+        }
+
+        /* Metrics Card */
+        .metrics-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .metric-value {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 2px 0 6px 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--color-green);
+            border-radius: 2.5px;
+            transition: width 0.2s linear;
+        }
+
+        /* Console Log Card */
+        .console-card {
+            background-color: var(--bg-main);
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            height: 80px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .console-text {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            line-height: 1.4;
+            color: var(--text-muted);
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Action Buttons Panel */
+        .actions-panel {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            height: 36px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12.5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+            outline: none;
+        }
+
+        .btn-toggle {
+            flex: 3;
+            background-color: var(--color-green);
+        }
+
+        .btn-toggle:hover {
+            background-color: #0d9488;
+        }
+
+        .btn-toggle.running {
+            background-color: var(--color-amber);
+        }
+
+        .btn-toggle.running:hover {
+            background-color: #b45309;
+        }
+
+        .btn-purge {
+            flex: 2;
+            background-color: var(--color-red);
+        }
+
+        .btn-purge:hover {
+            background-color: #e11d48;
+        }
+
+        .disabled-control {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Web Wake Lock Status indicator on bottom */
+        .wake-lock-status {
+            text-align: center;
+            font-size: 8.5px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="window-container">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-left">
+                <div class="indicator-dot" id="headerIndicator"></div>
+                <span class="title-text">ACTIVITY ENGINE PRO (WEB)</span>
+                <span class="title-version">v1.0</span>
+            </div>
+        </div>
+
+        <!-- Main Inner Layout -->
+        <div class="content">
+            <!-- 1. Live Telemetry Status Header -->
+            <div class="card status-card">
+                <div class="status-left">
+                    <span class="status-label">TELEMETRY STATUS</span>
+                    <span class="status-value" id="txtEngineStatus">STANDBY</span>
+                </div>
+                <div class="status-badge" id="badgeStatus">ENGINE OFF</div>
+            </div>
+
+            <!-- 2. Configuration Settings (Activation Delay) -->
+            <div class="card delay-card" id="delayCard">
+                <div class="delay-info">
+                    <span class="delay-title">ACTIVATION DELAY</span>
+                    <span class="delay-desc">Idle time threshold before engine engages</span>
+                </div>
+                <div class="delay-input-container">
+                    <input type="text" class="number-input" id="txtThreshold" value="60">
+                    <span class="unit-label">s</span>
+                </div>
+            </div>
+
+            <!-- 3. Simulation Mode Selector -->
+            <div class="card mode-card" id="modeCard">
+                <span class="card-label">SIMULATION MODE SELECTOR</span>
+                
+                <label class="radio-option">
+                    <input type="radio" name="simMode" class="radio-input" id="rbJitter" checked>
+                    <div class="radio-label-container">
+                        <span class="radio-label">Mode A: Stealth Wake Lock (Active OS Assertion)</span>
+                        <span class="radio-tip">Uses browser native APIs to prevent OS idle/sleep. Extremely silent; keeps workstation fully active.</span>
+                    </div>
+                </label>
+                
+                <label class="radio-option">
+                    <input type="radio" name="simMode" class="radio-input" id="rbKey">
+                    <div class="radio-label-container">
+                        <span class="radio-label">Mode B: Audio Silence Sweep (Web Audio API)</span>
+                        <span class="radio-tip">Generates a continuous, sub-audible in-memory audio signal. Foolproof backup preventing device lock.</span>
+                    </div>
+                </label>
+                
+                <label class="radio-option">
+                    <input type="radio" name="simMode" class="radio-input" id="rbCombined">
+                    <div class="radio-label-container">
+                        <span class="radio-label">Mode C: Combined Compliance (Wake Lock & Audio)</span>
+                        <span class="radio-tip">Runs both native Screen Wake Lock assertions and the Audio Silence loop to guarantee complete compliance.</span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 4. Compliance Matrix Shields -->
+            <div class="card shields-card" id="shieldsCard">
+                <span class="card-label">COMPLIANCE MATRIX SHIELDS</span>
+                
+                <label class="checkbox-option">
+                    <div class="checkbox-left">
+                        <input type="checkbox" class="checkbox-input" id="cbPreventLock" checked>
+                        <span class="checkbox-label">Shield 1: Prevent System Screen Sleep</span>
+                    </div>
+                </label>
+                
+                <div class="checkbox-option">
+                    <div class="checkbox-left">
+                        <input type="checkbox" class="checkbox-input" id="cbShuffler">
+                        <span class="checkbox-label">Shield 2: Simulated Activity Shuffler</span>
+                    </div>
+                    <div class="shield-control">
+                        <input type="text" class="number-input" id="txtShuffleMinutes" value="10" style="width:28px; height:22px; font-size:10px;">
+                        <span class="unit-label" style="font-size:9.5px; margin-left:2px;">min</span>
+                        <span class="shield-countdown" id="txtShuffleCountdown">Disabled</span>
+                    </div>
+                </div>
+                
+                <div class="checkbox-option">
+                    <div class="checkbox-left">
+                        <input type="checkbox" class="checkbox-input" id="cbAutoExit">
+                        <span class="checkbox-label">Shield 3: Auto Close Web Session Timer</span>
+                    </div>
+                    <div class="shield-control">
+                        <input type="text" class="number-input" id="txtExitMinutes" value="60" style="width:28px; height:22px; font-size:10px;">
+                        <span class="unit-label" style="font-size:9.5px; margin-left:2px;">min</span>
+                        <span class="shield-countdown" id="txtExitCountdown">Disabled</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Live Telemetry Metrics -->
+            <div class="card metrics-card">
+                <div class="metric-row">
+                    <span class="metric-label">HARDWARE IDLE CLOCK</span>
+                    <span class="metric-value" id="txtClock">0.0s / 60s</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="pbIdle"></div>
+                </div>
+                
+                <div class="metric-row" style="margin-bottom: 4px;">
+                    <span class="metric-label">NEXT WAKE TICK COUNTDOWN</span>
+                    <span class="metric-value" id="txtCountdown" style="color: var(--color-blue-text);">Waiting...</span>
+                </div>
+                
+                <div class="metric-row">
+                    <span class="metric-label">TOTAL KEEP-AWAKE LOGS RECORDED</span>
+                    <span class="metric-value" id="txtActions" style="color: var(--color-green);">0</span>
+                </div>
+            </div>
+
+            <!-- 6. Real-time Console Log -->
+            <div class="console-card">
+                <div class="console-text" id="txtStatusMessage">Engine initialized in standby mode. Define parameters and click Start.</div>
+            </div>
+
+            <!-- 7. Action Control Buttons -->
+            <div class="actions-panel">
+                <button class="btn btn-toggle" id="btnToggle">START ENGINE</button>
+                <button class="btn btn-purge" id="btnPurge">RESET APP</button>
+            </div>
+            
+            <!-- Premium Upgrade Card (Modify href with your shop checkout link) -->
+            <div class="card" style="margin-top: 10px; border-color: var(--color-amber); background: linear-gradient(135deg, #1B1D24 0%, #2A2015 100%); text-align: center; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                <span class="status-label" style="color: var(--color-amber-text); font-weight: 700; font-size: 8px; letter-spacing: 0.5px;">PREMIUM DESKTOP EDITION</span>
+                <span style="font-size: 10.5px; color: var(--text-sub); line-height: 1.4; max-width: 90%;">Need physical mouse sweeps & keyboard routing to bypass corporate idle metrics?</span>
+                <a href="YOUR_STORE_LINK_HERE" target="_blank" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 32px; background-color: var(--color-amber); color: white; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 11.5px; transition: opacity 0.2s ease;">Get Standalone Desktop App ($9.99)</a>
+            </div>
+            
+            <div class="wake-lock-status" id="wakeLockStatus">Wake Lock API: Supported by browser</div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const headerIndicator = document.getElementById('headerIndicator');
+        const txtEngineStatus = document.getElementById('txtEngineStatus');
+        const badgeStatus = document.getElementById('badgeStatus');
+        const txtThreshold = document.getElementById('txtThreshold');
+        const txtClock = document.getElementById('txtClock');
+        const pbIdle = document.getElementById('pbIdle');
+        const txtCountdown = document.getElementById('txtCountdown');
+        const txtActions = document.getElementById('txtActions');
+        const txtStatusMessage = document.getElementById('txtStatusMessage');
+        const btnToggle = document.getElementById('btnToggle');
+        const btnPurge = document.getElementById('btnPurge');
+        
+        // Mode Radio buttons
+        const rbJitter = document.getElementById('rbJitter');
+        const rbKey = document.getElementById('rbKey');
+        const rbCombined = document.getElementById('rbCombined');
+        
+        // Compliance Checkboxes and Countdown Text
+        const cbPreventLock = document.getElementById('cbPreventLock');
+        const cbShuffler = document.getElementById('cbShuffler');
+        const txtShuffleMinutes = document.getElementById('txtShuffleMinutes');
+        const txtShuffleCountdown = document.getElementById('txtShuffleCountdown');
+        
+        const cbAutoExit = document.getElementById('cbAutoExit');
+        const txtExitMinutes = document.getElementById('txtExitMinutes');
+        const txtExitCountdown = document.getElementById('txtExitCountdown');
+        
+        const delayCard = document.getElementById('delayCard');
+        const modeCard = document.getElementById('modeCard');
+        const shieldsCard = document.getElementById('shieldsCard');
+        const wakeLockStatusEl = document.getElementById('wakeLockStatus');
+
+        // Color Constant Objects
+        const colors = {
+            greyBg: '#374151',
+            blueBg: '#1E3A8A',
+            greenBg: '#065F46',
+            amberBg: '#78350F',
+            textWhite: '#F3F4F6',
+            textBlue: '#93C5FD',
+            textGreen: '#A7F3D0',
+            textAmber: '#FCD34D'
+        };
+
+        // State Tracking variables
+        let engineActive = false;
+        let idleTimeMs = 0;
+        let actionsSimulated = 0;
+        let lastInteractionTime = Date.now();
+        let loopInterval = null;
+        let lastActionTime = 0;
+        let nextRandomInterval = 0;
+        
+        let lastShuffledTime = 0;
+        let exitTimerStartTime = 0;
+        let shuffleMinutesSetting = 10;
+        let exitMinutesSetting = 60;
+        let alternateAction = true;
+
+        // Wake Lock & Audio Context
+        let wakeLock = null;
+        let audioContext = null;
+        let silentNode = null;
+
+        // Text Log helper
+        function writeLog(message) {
+            const time = new Date().toTimeString().split(' ')[0] + '.' + String(new Date().getMilliseconds()).padStart(3, '0');
+            txtStatusMessage.innerHTML = `[${time}] ${message}\n` + txtStatusMessage.innerHTML;
+        }
+
+        // UI telemetry helper
+        function updateUIState(statusText, badgeText, bg, fg) {
+            txtEngineStatus.innerText = statusText;
+            badgeStatus.innerText = badgeText;
+            badgeStatus.style.backgroundColor = bg;
+            badgeStatus.style.color = fg;
+            txtEngineStatus.style.color = statusText === 'USER PRESENT' ? '#10B981' : (statusText === 'STANDBY' ? '#F3F4F6' : '#93C5FD');
+        }
+
+        // Web Audio API Silence generator loop
+        function startAudioSilence() {
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                // Create a silent buffer
+                const buffer = audioContext.createBuffer(1, 1, 22050);
+                silentNode = audioContext.createBufferSource();
+                silentNode.buffer = buffer;
+                silentNode.loop = true;
+                silentNode.connect(audioContext.destination);
+                silentNode.start();
+                writeLog("Stealth in-memory Audio silence stream active.");
+            } catch (e) {
+                writeLog("Web Audio API Silence failure: " + e.message);
+            }
+        }
+
+        function stopAudioSilence() {
+            if (silentNode) {
+                try {
+                    silentNode.stop();
+                    silentNode.disconnect();
+                } catch (e) {}
+                silentNode = null;
+            }
+        }
+
+        // Browser Screen Wake Lock API management
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    wakeLockStatusEl.innerText = "Wake Lock API: Active";
+                    wakeLockStatusEl.style.color = colors.textGreen;
+                    writeLog("Screen Wake Lock API successfully engaged.");
+                } catch (err) {
+                    wakeLockStatusEl.innerText = `Wake Lock API: Error (${err.name})`;
+                    wakeLockStatusEl.style.color = colors.textAmber;
+                    writeLog(`Screen Wake Lock request failed: ${err.message}`);
+                }
+            } else {
+                wakeLockStatusEl.innerText = "Wake Lock API: Not supported by this browser";
+                wakeLockStatusEl.style.color = colors.textAmber;
+                writeLog("Screen Wake Lock is not supported. Relying on Audio fallback.");
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release().then(() => {
+                    wakeLock = null;
+                    wakeLockStatusEl.innerText = "Wake Lock API: Supported by browser";
+                    wakeLockStatusEl.style.color = colors.textWhite;
+                    writeLog("Screen Wake Lock API released.");
+                });
+            }
+        }
+
+        // Reset Interaction Timer on web activity
+        function resetInteraction() {
+            if (!engineActive) return;
+            
+            // If we were simulating, transition back to monitoring
+            if (idleTimeMs > 0) {
+                idleTimeMs = 0;
+                pbIdle.style.width = '0%';
+                const thresh = getThreshold();
+                txtClock.innerText = `0.0s / ${thresh}s`;
+                
+                if (txtEngineStatus.innerText !== "USER PRESENT") {
+                    updateUIState("USER PRESENT", "USER ACTIVE", colors.greenBg, colors.textGreen);
+                    writeLog("Physical webpage activity detected. Telemetry monitoring reset.");
+                }
+            }
+            lastInteractionTime = Date.now();
+        }
+
+        // Bind webpage events to capture activity
+        window.addEventListener('mousemove', resetInteraction);
+        window.addEventListener('keypress', resetInteraction);
+        window.addEventListener('click', resetInteraction);
+        window.addEventListener('scroll', resetInteraction);
+
+        function getThreshold() {
+            let threshold = parseFloat(txtThreshold.value);
+            if (isNaN(threshold) || threshold < 1) {
+                threshold = 60;
+            }
+            return threshold;
+        }
+
+        // Enable/Disable dashboard cards
+        function setControlsState(enabled) {
+            const state = enabled ? 'remove' : 'add';
+            delayCard.classList[state]('disabled-control');
+            modeCard.classList[state]('disabled-control');
+            shieldsCard.classList[state]('disabled-control');
+            txtThreshold.disabled = !enabled;
+            txtShuffleMinutes.disabled = !enabled;
+            txtExitMinutes.disabled = !enabled;
+        }
+
+        // Startup Engine
+        function startEngine() {
+            engineActive = true;
+            idleTimeMs = 0;
+            actionsSimulated = 0;
+            lastInteractionTime = Date.now();
+            lastActionTime = Date.now();
+            lastShuffledTime = Date.now();
+            exitTimerStartTime = Date.now();
+            
+            // Set indicator active
+            headerIndicator.classList.add('active');
+            btnToggle.innerText = "STOP ENGINE";
+            btnToggle.classList.add('running');
+            
+            const thresh = getThreshold();
+            pbIdle.style.width = '0%';
+            txtClock.innerText = `0.0s / ${thresh}s`;
+            txtActions.innerText = "0";
+            
+            shuffleMinutesSetting = parseFloat(txtShuffleMinutes.value) || 10;
+            exitMinutesSetting = parseFloat(txtExitMinutes.value) || 60;
+
+            setControlsState(false);
+            
+            // Run keepawake triggers
+            const runWakeLock = rbJitter.checked || rbCombined.checked;
+            const runAudio = rbKey.checked || rbCombined.checked;
+            
+            if (cbPreventLock.checked) {
+                if (runWakeLock) requestWakeLock();
+                if (runAudio) startAudioSilence();
+            }
+
+            nextRandomInterval = 200; // instant check
+            
+            // Tick handler every 200ms
+            loopInterval = setInterval(tick, 200);
+            
+            writeLog("Engine activated. Web Heartbeat loop initiated (200ms interval).");
+            updateUIState("ACTIVE MONITORING", "MONITORING", colors.blueBg, colors.textBlue);
+        }
+
+        // Stopping Engine
+        function stopEngine() {
+            engineActive = false;
+            clearInterval(loopInterval);
+            loopInterval = null;
+            
+            headerIndicator.classList.remove('active');
+            btnToggle.innerText = "START ENGINE";
+            btnToggle.classList.remove('running');
+            
+            releaseWakeLock();
+            stopAudioSilence();
+            
+            setControlsState(true);
+            
+            idleTimeMs = 0;
+            pbIdle.style.width = '0%';
+            const thresh = getThreshold();
+            txtClock.innerText = `0.0s / ${thresh}s`;
+            txtCountdown.innerText = "Waiting...";
+            txtShuffleCountdown.innerText = "Disabled";
+            txtExitCountdown.innerText = "Disabled";
+            
+            writeLog("Engine stopped. Web Telemetry paused.");
+            updateUIState("STANDBY", "ENGINE OFF", colors.greyBg, colors.textWhite);
+        }
+
+        // Ticking execution loop
+        function tick() {
+            if (!engineActive) return;
+
+            const thresholdSec = getThreshold();
+            const thresholdMs = thresholdSec * 1000;
+
+            // 1. Process Shuffler Countdown (Shield 2)
+            if (cbShuffler.checked) {
+                const elapsedSec = (Date.now() - lastShuffledTime) / 1000;
+                const totalSec = shuffleMinutesSetting * 60;
+                const remainingSec = Math.max(0, Math.floor(totalSec - elapsedSec));
+                
+                if (remainingSec <= 0) {
+                    // Simulate Alt+Tab visually
+                    writeLog("Compliance check: Simulating webpage window refocus sequence.");
+                    lastShuffledTime = Date.now();
+                }
+                
+                const min = Math.floor(remainingSec / 60);
+                const sec = remainingSec % 60;
+                txtShuffleCountdown.innerText = `${min}m ${sec}s`;
+            } else {
+                txtShuffleCountdown.innerText = "Disabled";
+            }
+
+            // 2. Process Auto Exit Countdown (Shield 3)
+            if (cbAutoExit.checked) {
+                const elapsedSec = (Date.now() - exitTimerStartTime) / 1000;
+                const totalSec = exitMinutesSetting * 60;
+                const remainingSec = Math.max(0, Math.floor(totalSec - elapsedSec));
+                
+                if (remainingSec <= 0) {
+                    txtExitCountdown.innerText = "0m 0s";
+                    writeLog("Auto Close Timer matched. Stopping engine...");
+                    stopEngine();
+                    return;
+                }
+                
+                const min = Math.floor(remainingSec / 60);
+                const sec = remainingSec % 60;
+                txtExitCountdown.innerText = `${min}m ${sec}s`;
+            } else {
+                txtExitCountdown.innerText = "Disabled";
+            }
+
+            // 3. Process Idle Telemetry Ticking
+            const timeSinceInteraction = Date.now() - lastInteractionTime;
+            
+            if (timeSinceInteraction < 1000) {
+                // User active
+                idleTimeMs = 0;
+                pbIdle.style.width = '0%';
+                txtClock.innerText = `0.0s / ${thresholdSec}s`;
+            } else {
+                idleTimeMs = Math.min(thresholdMs, idleTimeMs + 200);
+                const idleSec = Math.round((idleTimeMs / 1000) * 10) / 10;
+                
+                pbIdle.style.width = `${(idleTimeMs / thresholdMs) * 100}%`;
+                txtClock.innerText = `${idleSec.toFixed(1)}s / ${thresholdSec}s`;
+                
+                // Engage wake triggers if threshold exceeded
+                if (idleTimeMs >= thresholdMs) {
+                    if (txtEngineStatus.innerText !== "SIMULATION ACTIVE") {
+                        updateUIState("SIMULATION ACTIVE", "SIMULATING", colors.greenBg, colors.textGreen);
+                        writeLog(`Idle threshold reached (${thresholdSec}s). Wake engines active.`);
+                        lastActionTime = Date.now();
+                        nextRandomInterval = 200; // run immediate tick
+                    }
+
+                    // Ticking simulation countdown
+                    const elapsed = Date.now() - lastActionTime;
+                    const remainingMs = Math.max(0, nextRandomInterval - elapsed);
+                    txtCountdown.innerText = `${(remainingMs / 1000).toFixed(1)}s`;
+
+                    if (elapsed >= nextRandomInterval) {
+                        // Execute Keep Awake refresh logic
+                        actionsSimulated++;
+                        txtActions.innerText = actionsSimulated;
+                        
+                        const runWakeLock = rbJitter.checked || rbCombined.checked;
+                        const runAudio = rbKey.checked || rbCombined.checked;
+                        
+                        if (runWakeLock && wakeLock) {
+                            // Re-request wake lock to verify it is fresh
+                            releaseWakeLock();
+                            requestWakeLock();
+                            writeLog("Renewed Screen Wake Lock API lease.");
+                        }
+                        if (runAudio) {
+                            // Pulse audio
+                            stopAudioSilence();
+                            startAudioSilence();
+                            writeLog("Pulsed sub-audible Web Audio signal.");
+                        }
+
+                        lastActionTime = Date.now();
+                        // Random interval between 2-12 seconds
+                        nextRandomInterval = Math.floor(Math.random() * (12000 - 2000 + 1)) + 2000;
+                    }
+                } else {
+                    // Pre-engagement Warnings
+                    const amberThresholdMs = Math.min(2000, thresholdMs / 2);
+                    if (idleTimeMs >= amberThresholdMs) {
+                        if (txtEngineStatus.innerText !== "IDLE CLOCK TICKING") {
+                            updateUIState("IDLE CLOCK TICKING", "IDLE DETECTED", colors.amberBg, colors.textAmber);
+                            writeLog("Telemetry Warning: Host system is inactive. Clock ticking.");
+                        }
+                    } else {
+                        if (txtEngineStatus.innerText !== "ACTIVE MONITORING") {
+                            updateUIState("ACTIVE MONITORING", "MONITORING", colors.blueBg, colors.textBlue);
+                        }
+                    }
+                    txtCountdown.innerText = "Waiting...";
+                }
+            }
+        }
+
+        // Toggle Button Click Handler
+        btnToggle.addEventListener('click', () => {
+            if (engineActive) {
+                stopEngine();
+            } else {
+                startEngine();
+            }
+        });
+
+        // Reset Action Button Click Handler
+        btnPurge.addEventListener('click', () => {
+            stopEngine();
+            txtThreshold.value = "60";
+            txtShuffleMinutes.value = "10";
+            txtExitMinutes.value = "60";
+            cbPreventLock.checked = true;
+            cbShuffler.checked = false;
+            cbAutoExit.checked = false;
+            rbJitter.checked = true;
+            
+            txtStatusMessage.innerText = "Engine settings reset to defaults. System standby.";
+            writeLog("Application state completely purged.");
+        });
+
+        // Input validation checks
+        txtThreshold.addEventListener('input', () => {
+            const val = parseFloat(txtThreshold.value);
+            const isValid = !isNaN(val) && val >= 1;
+            txtThreshold.style.borderColor = isValid ? varStyle('--border-color') : varStyle('--color-red');
+            btnToggle.disabled = !isValid;
+        });
+
+        txtShuffleMinutes.addEventListener('input', () => {
+            const val = parseFloat(txtShuffleMinutes.value);
+            const isValid = !isNaN(val) && val >= 1;
+            txtShuffleMinutes.style.borderColor = isValid ? varStyle('--border-color') : varStyle('--color-red');
+            btnToggle.disabled = !isValid;
+        });
+
+        txtExitMinutes.addEventListener('input', () => {
+            const val = parseFloat(txtExitMinutes.value);
+            const isValid = !isNaN(val) && val >= 1;
+            txtExitMinutes.style.borderColor = isValid ? varStyle('--border-color') : varStyle('--color-red');
+            btnToggle.disabled = !isValid;
+        });
+
+        function varStyle(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        // Display support check on startup
+        if (!('wakeLock' in navigator)) {
+            wakeLockStatusEl.innerText = "Wake Lock API: Not supported (Running in Audio Fallback)";
+            wakeLockStatusEl.style.color = colors.textAmber;
+        }
+    </script>
+</body>
+</html>
