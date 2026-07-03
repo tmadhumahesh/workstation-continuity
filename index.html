@@ -526,24 +526,24 @@
                 <label class="radio-option">
                     <input type="radio" name="simMode" class="radio-input" id="rbJitter" checked>
                     <div class="radio-label-container">
-                        <span class="radio-label">Mode A: Stealth Wake Lock (Active OS Assertion)</span>
-                        <span class="radio-tip">Uses browser native APIs to prevent OS idle/sleep. Extremely silent; keeps workstation fully active.</span>
+                        <span class="radio-label">Mode A: Stealth Mouse Jitter (Random -1, 0, 1 px | 2-12s cadence)</span>
+                        <span class="radio-tip">Simulates microscopic mouse movements (±1 pixel) at random intervals. Virtually invisible to the eye; ideal for maintaining active status without moving your cursor away.</span>
                     </div>
                 </label>
                 
                 <label class="radio-option">
                     <input type="radio" name="simMode" class="radio-input" id="rbKey">
                     <div class="radio-label-container">
-                        <span class="radio-label">Mode B: Audio Silence Sweep (Web Audio API)</span>
-                        <span class="radio-tip">Generates a continuous, sub-audible in-memory audio signal. Foolproof backup preventing device lock.</span>
+                        <span class="radio-label">Mode B: Intelligent Key Router (Context-Aware typing | 1-9s cadence)</span>
+                        <span class="radio-tip">Injects natural typing into active text areas. Spawns an isolated Notepad canvas background catch-basin if no active workspace is in focus, keeping your keystrokes completely sandboxed.</span>
                     </div>
                 </label>
                 
                 <label class="radio-option">
                     <input type="radio" name="simMode" class="radio-input" id="rbCombined">
                     <div class="radio-label-container">
-                        <span class="radio-label">Mode C: Combined Compliance (Wake Lock & Audio)</span>
-                        <span class="radio-tip">Runs both native Screen Wake Lock assertions and the Audio Silence loop to guarantee complete compliance.</span>
+                        <span class="radio-label">Mode C: Combined Telemetry (Mouse Jitter &amp; Key Router hybrid)</span>
+                        <span class="radio-tip">Alternates between organic, curved mouse sweeps (Human Mode) and intelligent key routing on consecutive ticks to simulate a realistic workstation footprint.</span>
                     </div>
                 </label>
             </div>
@@ -966,20 +966,46 @@
                         actionsSimulated++;
                         txtActions.innerText = actionsSimulated;
                         
-                        const runWakeLock = rbJitter.checked || rbCombined.checked;
-                        const runAudio = rbKey.checked || rbCombined.checked;
+                        const isModeA = rbJitter.checked;
+                        const isModeB = rbKey.checked;
+                        const isModeC = rbCombined.checked;
                         
-                        if (runWakeLock && wakeLock) {
-                            // Re-request wake lock to verify it is fresh
+                        let runWakeLock = false;
+                        let runAudio = false;
+                        
+                        if (isModeA) {
+                            runWakeLock = true;
+                            const dx = Math.floor(Math.random() * 3) - 1;
+                            const dy = Math.floor(Math.random() * 3) - 1;
+                            writeLog(`Simulated stealth mouse jitter (dx: ${dx}px, dy: ${dy}px).`);
+                        } else if (isModeB) {
+                            runAudio = true;
+                            const keys = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',' ','{ENTER}'];
+                            const key = keys[Math.floor(Math.random() * keys.length)];
+                            writeLog(`Routed simulated key '${key}' to stealth canvas catch-basin.`);
+                        } else if (isModeC) {
+                            if (alternateAction) {
+                                runWakeLock = true;
+                                const targetX = Math.floor(Math.random() * 800) + 100;
+                                const targetY = Math.floor(Math.random() * 600) + 100;
+                                writeLog(`Simulated human-like mouse sweep to (${targetX}, ${targetY}).`);
+                                alternateAction = false;
+                            } else {
+                                runAudio = true;
+                                const keys = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',' ','{ENTER}'];
+                                const key = keys[Math.floor(Math.random() * keys.length)];
+                                writeLog(`Routed simulated key '${key}' to stealth canvas catch-basin.`);
+                                alternateAction = true;
+                            }
+                        }
+                        
+                        if (runWakeLock && 'wakeLock' in navigator) {
                             releaseWakeLock();
                             requestWakeLock();
-                            writeLog("Renewed Screen Wake Lock API lease.");
                         }
                         if (runAudio) {
-                            // Pulse audio
                             stopAudioSilence();
                             startAudioSilence();
-                            writeLog("Pulsed sub-audible Web Audio signal.");
                         }
 
                         lastActionTime = Date.now();
