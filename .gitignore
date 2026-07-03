@@ -1,0 +1,10 @@
+# Git Ignore patterns for Workstation Continuity Pro
+# Protects product executables, zip files, logs, and raw source scripts from public leak
+
+*.ps1
+*.exe
+*.zip
+*.log
+*.bak
+*- Copy.ps1
+*Backup.ps1
